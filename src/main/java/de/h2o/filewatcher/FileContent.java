@@ -6,39 +6,40 @@ import java.io.FileReader;
 
 public class FileContent {
 
-	private File file;
+    private File file;
 
-	public FileContent(File file) {
-		this.file = file;
-	}
+    public FileContent(File file) {
+        this.file = file;
+    }
 
-	/**
-	 * 
-	 * @return this method returns the whole content of the file
-	 */
-	private String getFileContent() throws Exception {
+    /**
+     * 
+     * @return this method returns the whole content of the file
+     */
+    private String getFileContent() throws Exception {
 
-		if (!file.isFile()) {
-			return "not a file!";
-		}
+        // TODO check if exists --> message
+        if (!file.isFile()) {
+            return "not a file!";
+        }
 
-		FileReader fr = new FileReader(file);
-		BufferedReader br = new BufferedReader(fr);
-		StringBuffer sb = new StringBuffer();
-		String line;
-		while ((line = br.readLine()) != null) {
-			sb.append(line);
-			sb.append("\n");
-		}
-		br.close();
-		return sb.toString();
-	}
+        FileReader fr = new FileReader(file);
+        BufferedReader br = new BufferedReader(fr);
+        StringBuffer sb = new StringBuffer();
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+            sb.append("\n");
+        }
+        br.close();
+        return sb.toString();
+    }
 
-	public void displayFileContent() throws Exception {
+    public void displayFileContent() throws Exception {
 
-		System.out.println("===============");
-		System.out.println(getFileContent());
-		System.out.println("===============");
+        System.out.println("===============");
+        System.out.println(getFileContent());
+        System.out.println("===============");
 
-	}
+    }
 }

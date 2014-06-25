@@ -8,12 +8,12 @@ public class ParameterHighLevelTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void ifParameterIsNullExceptionIsThrown() {
-		new ParameterHighLevel(null);
+		new AVParameterController(null);
 	}
 
 	@Test
 	public void ifOneFileNameIsPassedEverythingIsFine() {
-		ParameterHighLevel parameterHighLevel = new ParameterHighLevel(new String[] { "/tmp" });
+		AVParameterController parameterHighLevel = new AVParameterController(new String[] { "/tmp" });
 		parameterHighLevel.isValid();
 
 		assertEquals("/tmp", parameterHighLevel.getFileToWatch());
