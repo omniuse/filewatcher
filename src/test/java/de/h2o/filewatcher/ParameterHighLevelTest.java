@@ -16,7 +16,7 @@ public class ParameterHighLevelTest {
 		AVParameterController parameterHighLevel = new AVParameterController(new String[] { "/tmp" });
 		parameterHighLevel.isValid();
 
-		assertEquals("/tmp", parameterHighLevel.getFileToWatch());
+		assertEquals("/tmp", parameterHighLevel.getFile());
 	}
 
 }

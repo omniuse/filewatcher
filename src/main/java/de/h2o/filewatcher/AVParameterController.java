@@ -4,97 +4,94 @@ import java.io.File;
 
 public class AVParameterController extends ParameterController {
 
-    private boolean continuousChanges;
-    private File parameterFileName;
+	public boolean continuousChanges = false;
+	private File parameterFileName = null;
+	private boolean isFile = false; // helper
 
-    public AVParameterController(String[] args) {
-        super(args);
+	public AVParameterController(String[] args) {
+		super(args);
 
-        // isValid():
-        // * check if valid
-        // * store following
-        // ** fileName
-        // ** continousChanges (bool)
-        if (hasParameter("-c")) {
-            continuousChanges = true;
-        }
-        if (hasFile()) {
-            fileName = getFile();
-        } else {
-            throw new RuntimeException();
-        }
+		isValid();
+		// * check if valid
+		// * store following
+		// ** fileName
+		// ** continousChanges (bool)
+		if (hasParameter("-c")) {
+			continuousChanges = true;
+		}
 
-    }
+		if (!hasFile()) {
+			throw new RuntimeException("Keine gültige Datei gewählt");
+		}
 
-    /**
-     * check, if first parameter is a file and exists<br>
-     * 
-     * @return true, if parameter is a file and exists - otherwise false or an exception will be thrown.
-     */
-    private boolean doesFileOfFirstParameterExists() {
-        if (args.length > 0) {
-            File file = new File(args[0]);
+		// Maik: nicht nötig, da in isValid() schon der filename gesetzt wird
+		// if (hasFile()) {
+		// fileName = getFile();
+		// } else {
+		// throw new RuntimeException("Keine Datei");
+		// }
 
-            if (file.exists()) {
-                parameterFileName = file;
-                return true;
-            }
+	}
 
-            if (!file.getName().contains(".")) {
-                System.out.println(file + " ist keine datei");
-                return false;
-            }
+	/**
+	 * überprüft, ob<br>
+	 * -Argumente übergeben wurden<br>
+	 * -Datei im .txt oder .adocFormat vorliegt<br>
+	 * -angegebene Datei existiert
+	 * 
+	 * setzt bei erfolgreicher Prüfung die variablen 'parameterFileName' und 'isFile'
+	 * 
+	 * @return true, wenn Überprüfung erfolgreich, sonst exception
+	 */
+	public boolean isValid() {
+		// (1) verify, if args has parameters -> no parameters = exception
+		if (args.length == 0) {
+			throw new RuntimeException("Keine Argumente übergeben!");
+		}
 
-            else {
-                System.out.println("Datei existiert nicht");
-                return false;
-            }
-        }
-        throw new RuntimeException("Keine Argumente übergeben!");
-    }
+		// (2) verify, if one parameter is either .txt or .adoc -> otherwise exception
+		for (String arg : args) {
+			if (arg.contains(".txt") || arg.contains(".adoc")) {
+				// (2a) verify, if this file exists -> otherwise exception
+				File file = new File(arg);
+				if (!file.exists()) {
+					throw new RuntimeException("Datei '" + file + "' existiert nicht");
+				}
+				parameterFileName = file;
+				isFile = true;
+			}
+		}
+		if (!isFile) {
+			throw new RuntimeException("Bitte '.txt' oder '.adoc' Datei auswählen.");
+		}
+		return true;
+	}
 
-    /**
-     * check, if the second parameter is -c. <br>
-     * 
-     * @return true, if the second parameter is '-c' - otherwise an exception will be thrown.
-     */
-    public boolean isContinouosChangesActive() {
-        String errorMessage = "Um die Datei zu beobachten, muss der 2. Parameter '-c' sein.";
-        if (args.length > 1) {
+	private boolean hasParameter(String parameter) {
+		for (String arg : args) {
+			if (arg.equals("-c")) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-            if (args[1].equals("-c")) {
-                return true;
-            }
+	/**
+	 * returns true, if one parameter is a valid file
+	 */
+	private boolean hasFile() {
+		if (isFile) {
+			return true;
+		}
+		return false;
+	}
 
-            System.out.println(errorMessage);
-            throw new RuntimeException(errorMessage);
-        }
-        System.out.println("Kein 2. Parameter übergeben. " + errorMessage);
-        throw new RuntimeException("Kein 2. Parameter übergeben. " + errorMessage);
-    }
-
-    /**
-     * check, if file type is either .txt or .adoc
-     * 
-     * @return true, if file type is either .txt or .adoc - otherwise an exception will be thrown.
-     */
-    public boolean isValid() {
-        if (doesFileOfFirstParameterExists()) {
-            if ((parameterFileName.getName().endsWith(".txt") || parameterFileName.getName().endsWith(".adoc"))) {
-                return true;
-            }
-        }
-        throw new RuntimeException("Nur Daeien mit '.txt' oder '.adoc' sind erlaubt.");
-    }
-
-    /**
-     * Returns the file which has to watched.
-     * 
-     */
-    public File getFileToWatch() {
-        if (parameterFileName.equals("")) {
-            throw new RuntimeException("keine Datei");
-        }
-        return parameterFileName;
-    }
+	/**
+	 * returns the file, which has to be watched.
+	 * 
+	 */
+	public File getFile() {
+		// constructor sets value for 'parameterFileName' (with 'isValid()'), otherwise exception
+		return parameterFileName;
+	}
 }
