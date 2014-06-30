@@ -45,18 +45,16 @@ public class AVMain implements FileChangeListener {
 	private void run(String[] args) throws Exception {
 
 		// Superklasse für Parameter (wie im ersten Projekt)
+		// im Konstruktor von AVParameterController wird bereits validiert
 		AVParameterController parameter = new AVParameterController(args);
 
-		if (parameter.isValid()) {
-			fileToWatch = parameter.getFile();
-			System.out.println("content of file: " + fileToWatch.getName());
+		fileToWatch = parameter.getFile();
+		System.out.println("content of file: " + fileToWatch.getName());
 
-			fileContent = new FileContent(fileToWatch);
-			fileContent.displayFileContent();
+		fileContent = new FileContent(fileToWatch);
+		fileContent.displayFileContent();
 
-		}
-
-		if (parameter.isValid() && parameter.continuousChanges) {
+		if (parameter.isContinuousChangesEnabled()) {
 			System.out.println("\nDie Datei '" + fileToWatch + "' wird auf Veränderungen überwacht\n");
 			System.out.println("Beenden mit [STRG] + [C]");
 			FileChangeNotifier fileChangeNotifier = new FileChangeNotifier(fileToWatch);

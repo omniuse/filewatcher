@@ -14,7 +14,7 @@ public class ParameterHighLevelTest {
 	@Test
 	public void ifOneFileNameIsPassedEverythingIsFine() {
 		AVParameterController parameterHighLevel = new AVParameterController(new String[] { "/tmp" });
-		parameterHighLevel.isValid();
+		// parameterHighLevel.validate();
 
 		assertEquals("/tmp", parameterHighLevel.getFile());
 	}

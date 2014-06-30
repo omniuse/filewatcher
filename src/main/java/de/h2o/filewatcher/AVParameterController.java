@@ -4,18 +4,14 @@ import java.io.File;
 
 public class AVParameterController extends ParameterController {
 
-	public boolean continuousChanges = false;
-	private File parameterFileName = null;
-	private boolean isFile = false; // helper
+	private boolean continuousChanges = false;
+	private File parameterFile = null;
 
 	public AVParameterController(String[] args) {
 		super(args);
 
-		isValid();
-		// * check if valid
-		// * store following
-		// ** fileName
-		// ** continousChanges (bool)
+		validate();
+
 		if (hasParameter("-c")) {
 			continuousChanges = true;
 		}
@@ -23,14 +19,6 @@ public class AVParameterController extends ParameterController {
 		if (!hasFile()) {
 			throw new RuntimeException("Keine gültige Datei gewählt");
 		}
-
-		// Maik: nicht nötig, da in isValid() schon der filename gesetzt wird
-		// if (hasFile()) {
-		// fileName = getFile();
-		// } else {
-		// throw new RuntimeException("Keine Datei");
-		// }
-
 	}
 
 	/**
@@ -41,9 +29,12 @@ public class AVParameterController extends ParameterController {
 	 * 
 	 * setzt bei erfolgreicher Prüfung die variablen 'parameterFileName' und 'isFile'
 	 * 
+	 * 
+	 * // * check if valid // * store following // ** fileName // ** continousChanges (bool)
+	 * 
 	 * @return true, wenn Überprüfung erfolgreich, sonst exception
 	 */
-	public boolean isValid() {
+	private void validate() {
 		// (1) verify, if args has parameters -> no parameters = exception
 		if (args.length == 0) {
 			throw new RuntimeException("Keine Argumente übergeben!");
@@ -55,35 +46,24 @@ public class AVParameterController extends ParameterController {
 				// (2a) verify, if this file exists -> otherwise exception
 				File file = new File(arg);
 				if (!file.exists()) {
-					throw new RuntimeException("Datei '" + file + "' existiert nicht");
+					throw new RuntimeException("Datei '" + file.getAbsolutePath() + "' existiert nicht");
 				}
-				parameterFileName = file;
-				isFile = true;
+				parameterFile = file;
 			}
 		}
-		if (!isFile) {
+		if (!hasFile()) {
 			throw new RuntimeException("Bitte '.txt' oder '.adoc' Datei auswählen.");
 		}
-		return true;
-	}
-
-	private boolean hasParameter(String parameter) {
-		for (String arg : args) {
-			if (arg.equals("-c")) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**
 	 * returns true, if one parameter is a valid file
 	 */
 	private boolean hasFile() {
-		if (isFile) {
-			return true;
+		if (parameterFile == null) {
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	/**
@@ -92,6 +72,13 @@ public class AVParameterController extends ParameterController {
 	 */
 	public File getFile() {
 		// constructor sets value for 'parameterFileName' (with 'isValid()'), otherwise exception
-		return parameterFileName;
+		return parameterFile;
+	}
+
+	public boolean isContinuousChangesEnabled() {
+		if (!continuousChanges) {
+			return false;
+		}
+		return true;
 	}
 }
